@@ -1,0 +1,562 @@
+attached is a mystery_signal.mat
+% Load The Signal
+% load('mystery_signal.mat');
+% load the mystery signal
+
+%% Visualize The Signal
+% Visualize and examine the signal using different plots.
+%
+% Useful functions:
+%%
+% * |plot(x, y, '.'/'x'/'o')|, |stem|, |scatter|
+% * |scatterplot|: display the signal in the complex plane ( |scatterplot(s)|
+% )
+% * |abs|: absolute value of the signal
+% * |angle|: phase of the signal
+
+% Your Code Here:
+
+
+% Do you see a constellation?
+% Answer:
+%% First Observations
+% Right now you know nothing about this signal! Hopefully this will change soon...
+%
+% We want to investigate it and discover the mechanisms and protocols that create
+% it.
+%
+% But first we must ask ourselves - what are the possible properties we might
+% be looking for?
+%
+% Answer the following questions:
+%
+%
+% What phenomena do you observe from the visualizations of the signal? Write up to 2
+% Answer:
+%
+%
+% What are some possible properties the signal might have? Write up to 3
+% Answer:
+%
+%
+% For one of those properties - how would you investigate it? How would you test if the signal has this property?
+% Answer:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% Find the Signal's Frame Size
+% We suspect that the signal has a periodic frame structure - can you find it?
+%
+% _By "frame structure" we mean that the symbols (in our case each sample is
+% a single symbol) are actually divided into frames of a constant length, and
+% those frames have some kind of structure we can find._
+%
+% _For now we only want you to find the size of those frames._
+%
+% Useful functions:
+%%
+% * |fft|
+% * |spectrogram|
+% * |xcorr| ( useful syntax: |[r, lags] = xcorr(x, y)| )
+% * |histogram|
+
+% Your Code Here:
+
+
+
+
+
+
+
+frame_size = [];  % enter your answer here
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% Split the Signal to Frames
+% Now that we found the frames size, we can split the signal into the separate
+% frames.
+%
+% We will do this by reshaping the vector to a matrix of size (|num_of_frames|
+% x |frame_size|), meaning every row is a different frame.
+
+s = s(1:end - mod(length(s), frame_size));  % round to a full frame size
+s_buffered = buffer(s, frame_size).';       % split to frames: every row is a new frame
+num_of_frames = size(s_buffered, 1);
+%% Investigate the Frame Structure
+% What causes this frame structure? Can you find it?
+%
+%
+%
+% Useful functions:
+%%
+% * |abs| , |angle|
+% * |mean|: mean value. Operates by default on columns of arrays
+% * |var| / |std|: variance. Operates by default on columns of arrays.
+% * |setdiff|: Return the non-intersecting part of two arrays
+
+% Your Code Here:
+
+
+
+
+
+
+
+
+
+
+
+
+% Your explanation for the frame structure:
+%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%
+%% Hint: Can you find something that is common to all the frames?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% Identify the Special Data - AKA "Pilots"
+% There seem to be certain indices in the frame that are special. Find them
+% and the period of their locations and write it here.
+
+% Write the period of the special data you found in the frame:
+pilots_period = [];  % enter your answer here
+
+% Get the indices of the pilots inside a single frame
+pilots_inds = pilots_period : pilots_period : frame_size;
+
+% Get the indices of all the pilots in the signal
+full_inds = buffer((1:length(s)).', frame_size).';
+pilots_full_inds = full_inds(:, pilots_inds);
+
+%% Investigate the Pilots
+
+pilots = s_buffered(:, pilots_inds);
+%%
+% We found that some of the symbols in the frame are not really data, but constant
+% symbols known as *pilots*.
+% Can you find interesting properties of these pilots? Investigate them and write up to 2
+
+% Your Code Here:
+
+
+
+
+
+% Write the properties you found here:
+%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% Correct the Linear Phase
+% The signal seems to be multiplied by a linear phase.
+% Can you use the pilots to fix that?
+%
+%
+% _Such linear phase can be the result of a carrier frequency offset:_
+%
+% _if the signal was modulated to a carrier frequency_ $\omega_c$, _that is_
+% $r\left(t\right)=r_{\textrm{baseband}} \left(t\right)\cdot e^{j\omega {\;}_c
+% t}$, _but we demodulated it with a wrong carrier frequency_ ${\omega \;}_c \prime$_,
+% then the result signal will contain a linear phase:_ $s\left(t\right)=r\left(t\right)\cdot
+% e^{-j\omega {{\;}_c }^{\prime } t} =r_{\textrm{baseband}} \left(t\right)\cdot
+% e^{j\Delta \omega_c t}$_,  where_ $\Delta \omega_c =\omega_c -{\omega_c }^{\prime
+% }$_._
+
+% choose the best plot to extract the linear phase present in the data and pilots:
+x = []; % replace with your answer
+y = []; % replace with your answer
+linear_phase_slope = ExtractSlope(x, y); % use this function to visually draw a line and get its slope
+
+
+% Correct the linear phase
+s_fixed = s .* exp(-1j * linear_phase_slope .* (0:length(s)-1).');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% Visualization Revisited
+% Visualize the signal again (the fixed version). *Can you see a constellation
+% now?*
+
+% Your Code Here:
+
+
+
+% Visualize only the pilots:
+
+s_buffered_fixed = buffer(s_fixed, frame_size).';
+pilots_fixed = s_buffered_fixed(:, pilots_inds);
+% Your Code Here:
+
+
+%%
+% What is the order of the constellation of the pilots? (how many clusters are
+% there?)
+
+M_pilots = [];  % the order of the constellation of the pilots
+% Remove the Pilots
+% The pilots are known in advance, and therfore do not carry any information
+% - so we want to remove them before we decode the data.
+
+data_indices = setdiff(1:frame_size, pilots_inds);
+data = s_buffered_fixed(:, data_indices).';
+data = data(:);
+% Visualize the data without the pilots:
+
+% Your Code Here:
+
+
+%%
+% What is the order of the constellation? (how many clusters are there?)
+
+M = [];  % the order of the constellation
+%% Extract the Data!
+% given the constellation image, we can now convert each sample to the corresponding
+% bits.
+
+bits_demod = qamdemod(data, M, 'OutputType', 'bit');
+WriteBitsFile('MysterySignal.bits', bits_demod);
+%% Examine the Binary Data!
+% What is the data that was transmitted?
+% Want to learn more? *COME TO 421!*
+%% Helper Functions
+
+function slope = ExtractSlope(x, y)
+    fig = figure;
+    plot(x, y, '.');
+    line = drawline();
+    slope = (line.Position(2,2)-line.Position(1,2))/((line.Position(2,1)-line.Position(1,1)));
+    close(fig);
+end
+
+function WriteBitsFile(filename, bits)
+    fid = fopen(filename, 'w');
+    fwrite(fid, bits, 'ubit1', 0, 'b');
+    fclose(fid);
+end
