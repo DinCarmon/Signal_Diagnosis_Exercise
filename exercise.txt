@@ -42,64 +42,6 @@ attached is a mystery_signal.mat
 % For one of those properties - how would you investigate it? How would you test if the signal has this property?
 % Answer:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %% Find the Signal's Frame Size
 % We suspect that the signal has a periodic frame structure - can you find it?
 %
@@ -118,67 +60,7 @@ attached is a mystery_signal.mat
 
 % Your Code Here:
 
-
-
-
-
-
-
-frame_size = [];  % enter your answer here
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+frame_size = [8];  % enter your answer here
 
 % Split the Signal to Frames
 % Now that we found the frames size, we can split the signal into the separate
@@ -204,122 +86,11 @@ num_of_frames = size(s_buffered, 1);
 
 % Your Code Here:
 
-
-
-
-
-
-
-
-
-
-
-
 % Your explanation for the frame structure:
 %
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %%
 %% Hint: Can you find something that is common to all the frames?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 % Identify the Special Data - AKA "Pilots"
 % There seem to be certain indices in the frame that are special. Find them
@@ -345,70 +116,8 @@ pilots = s_buffered(:, pilots_inds);
 
 % Your Code Here:
 
-
-
-
-
 % Write the properties you found here:
 %
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 % Correct the Linear Phase
 % The signal seems to be multiplied by a linear phase.
@@ -433,72 +142,6 @@ linear_phase_slope = ExtractSlope(x, y); % use this function to visually draw a 
 
 % Correct the linear phase
 s_fixed = s .* exp(-1j * linear_phase_slope .* (0:length(s)-1).');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 %% Visualization Revisited
 % Visualize the signal again (the fixed version). *Can you see a constellation
